@@ -1,12 +1,18 @@
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title></title>
-<style type="text/css">body {
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Basketball Timer</title>
+  <style>
+    body {
       font-family: 'Digital-7', monospace;
       text-align: center;
       background-color: white;
       margin: 0;
       padding: 0;
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
       height: 100vh;
@@ -87,32 +93,63 @@
       transition: width 0.01s linear;
     }
 
+    .log-container {
+      margin-top: 20px;
+      width: 80%;
+      max-width: 500px;
+      font-family: Arial, sans-serif;
+      text-align: left;
+    }
+
+    .log-entry {
+      padding: 5px;
+      border-bottom: 1px solid #ccc;
+      font-size: 14px;
+    }
+
     @font-face {
       font-family: 'Digital-7';
       src: url('https://fonts.cdnfonts.com/s/18017/Digital7-Regular.woff') format('woff');
     }
-</style>
-<div class="timer-container">
-<div class="timer" id="timer"><span><button class="timer-button plus" onclick="adjustTime(60000)">+</button> </span>
-<div id="minutes"><span>10</span></div>
-<span><button class="timer-button minus" onclick="adjustTime(-60000)">-</button> </span> : <span><button class="timer-button plus" onclick="adjustTime(1000)">+</button> </span>
+  </style>
+</head>
+<body>
+  <div class="timer-container">
+    <div class="timer" id="timer">
+      <span>
+        <button class="timer-button plus" onclick="adjustTime(60000)">+</button>
+        <div id="minutes">10</div>
+        <button class="timer-button minus" onclick="adjustTime(-60000)">-</button>
+      </span>
+      :
+      <span>
+        <button class="timer-button plus" onclick="adjustTime(1000)">+</button>
+        <div id="seconds">00</div>
+        <button class="timer-button minus" onclick="adjustTime(-1000)">-</button>
+      </span>
+      :
+      <span>
+        <button class="timer-button plus" onclick="adjustTime(10)">+</button>
+        <div id="milliseconds">00</div>
+        <button class="timer-button minus" onclick="adjustTime(-10)">-</button>
+      </span>
+    </div>
 
-<div id="seconds"><span>00</span></div>
-<span><button class="timer-button minus" onclick="adjustTime(-1000)">-</button> </span> : <span><button class="timer-button plus" onclick="adjustTime(10)">+</button> </span>
+    <div class="controls">
+      <img id="start-stop-btn" src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Play_Pause_icon_2283501.svg/300px-Play_Pause_icon_2283501.svg.png" onclick="toggleTimer()" alt="Start/Stop">
+      <img src="https://www.svgrepo.com/show/343263/reset.svg" onclick="resetTimer()" alt="Reset">
+    </div>
 
-<div id="milliseconds"><span>00</span></div>
-<span><button class="timer-button minus" onclick="adjustTime(-10)">-</button> </span></div>
+    <div class="progress">
+      <div class="progress-bar" id="progress-bar"></div>
+    </div>
+  </div>
 
-<div class="controls"><img alt="Start/Stop" id="start-stop-btn" onclick="toggleTimer()" src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Play_Pause_icon_2283501.svg/300px-Play_Pause_icon_2283501.svg.png" /> <img alt="Reset" onclick="resetTimer()" src="https://www.svgrepo.com/show/343263/reset.svg" /></div>
+  <div class="log-container" id="log-container"></div>
 
-<div class="progress">
-<div class="progress-bar" id="progress-bar"> </div>
-</div>
-</div>
+  <audio id="alarm-sound" src="https://www.soundjay.com/misc/sounds/bell-ringing-01.mp3" preload="auto"></audio>
 
-<p>
-<audio id="alarm-sound" preload="auto" src="https://www.soundjay.com/misc/sounds/bell-ringing-01.mp3"> </audio>
-<script>
+  <script>
     let timerInterval;
     let timeRemaining = 10 * 60 * 1000; // 10 minutes in milliseconds
     const totalDuration = 10 * 60 * 1000; // Total fixed duration
@@ -176,6 +213,16 @@
       clearInterval(timerInterval);
       timerInterval = null;
       isRunning = false;
+      logPauseTime(); // Log the time when paused
+    }
+
+    function logPauseTime() {
+      const { minutes, seconds, centiseconds } = formatTime(timeRemaining);
+      const logContainer = document.getElementById('log-container');
+      const newLog = document.createElement('div');
+      newLog.className = 'log-entry';
+      newLog.textContent = `Paused at: ${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}:${String(centiseconds).padStart(2, '0')}`;
+      logContainer.appendChild(newLog);
     }
 
     function resetTimer() {
@@ -185,4 +232,6 @@
     }
 
     updateTimerDisplay();
-  </script></p>
+  </script>
+</body>
+</html>
