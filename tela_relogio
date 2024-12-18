@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Basketball Timer</title>
+  <style>
+    body {
+      font-family: 'Courier New', monospace;
+      text-align: center;
+      background-color: black;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: white;
+    }
+
+    .timer-container {
+      padding: 10px;
+      border-radius: 10px;
+      max-width: 500px;
+      width: 100%;
+    }
+
+    .timer {
+      font-size: 80px;
+      margin: 10px 0;
+      color: red;
+      letter-spacing: 3px;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    .timer span {
+      position: relative;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .timer-button {
+      font-size: 16px;
+      color: white;
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .plus {
+      margin-bottom: 5px;
+    }
+
+    .minus {
+      margin-top: 5px;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .controls button {
+      padding: 10px 20px;
+      font-size: 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      background: #444;
+      color: white;
+      transition: background 0.3s;
+    }
+
+    .controls button:hover {
+      background: #666;
+    }
+
+    .progress {
+      margin: 10px 0;
+      height: 15px;
+      background: #333;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: red;
+      transition: width 0.01s linear;
+    }
+  </style>
+</head>
+<body>
+  <div class="timer-container">
+    <div class="timer" id="timer">
+      <span>
+        <button class="timer-button plus" onclick="adjustTime(60000)">+</button>
+        <div id="minutes">10</div>
+        <button class="timer-button minus" onclick="adjustTime(-60000)">-</button>
+      </span>
+      :
+      <span>
+        <button class="timer-button plus" onclick="adjustTime(1000)">+</button>
+        <div id="seconds">00</div>
+        <button class="timer-button minus" onclick="adjustTime(-1000)">-</button>
+      </span>
+      :
+      <span>
+        <button class="timer-button plus" onclick="adjustTime(10)">+</button>
+        <div id="milliseconds">000</div>
+        <button class="timer-button minus" onclick="adjustTime(-10)">-</button>
+      </span>
+    </div>
+
+    <div class="controls">
+      <button onclick="startTimer()" style="background: green;">Start</button>
+      <button onclick="pauseTimer()" style="background: orange;">Stop</button>
+      <button onclick="resetTimer()" style="background: red;">Reset</button>
+    </div>
+
+    <div class="progress">
+      <div class="progress-bar" id="progress-bar"></div>
+    </div>
+  </div>
+
+  <audio id="alarm-sound" src="https://www.soundjay.com/button/beep-07.wav" preload="auto"></audio>
+
+  <script>
+    let timerInterval;
+    let timeRemaining = 10 * 60 * 1000; // 10 minutes in milliseconds
+    const totalDuration = 10 * 60 * 1000; // Total fixed duration
+
+    function formatTime(milliseconds) {
+      const minutes = Math.floor(milliseconds / 60000);
+      const seconds = Math.floor((milliseconds % 60000) / 1000);
+      const millis = milliseconds % 1000;
+      return { minutes, seconds, millis };
+    }
+
+    function updateTimerDisplay() {
+      const { minutes, seconds, millis } = formatTime(timeRemaining);
+      document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+      document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+      document.getElementById('milliseconds').textContent = String(millis).padStart(3, '0');
+      const progressBar = document.getElementById('progress-bar');
+      const percentage = ((totalDuration - timeRemaining) / totalDuration) * 100;
+      progressBar.style.width = `${percentage}%`;
+    }
+
+    function adjustTime(amount) {
+      timeRemaining = Math.max(0, timeRemaining + amount);
+      updateTimerDisplay();
+    }
+
+    function startTimer() {
+      if (timerInterval || timeRemaining <= 0) return;
+
+      const startTime = Date.now();
+      const endTime = startTime + timeRemaining;
+
+      timerInterval = setInterval(() => {
+        const now = Date.now();
+        timeRemaining = Math.max(0, endTime - now);
+        updateTimerDisplay();
+
+        if (timeRemaining <= 0) {
+          clearInterval(timerInterval);
+          timerInterval = null;
+          document.getElementById('alarm-sound').play();
+        }
+      }, 10);
+    }
+
+    function pauseTimer() {
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+
+    function resetTimer() {
+      pauseTimer();
+      timeRemaining = totalDuration; // Reset to 10 minutes
+      updateTimerDisplay();
+    }
+
+    updateTimerDisplay();
+  </script>
+</body>
+</html>
