@@ -1,0 +1,188 @@
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title></title>
+<style type="text/css">body {
+      font-family: 'Digital-7', monospace;
+      text-align: center;
+      background-color: white;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: black;
+    }
+
+    .timer-container {
+      padding: 10px;
+      border-radius: 10px;
+      max-width: 500px;
+      width: 100%;
+    }
+
+    .timer {
+      font-size: 80px;
+      margin: 10px 0;
+      color: black;
+      letter-spacing: 3px;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    .timer span {
+      position: relative;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .timer-button {
+      font-size: 16px;
+      color: black;
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .plus {
+      margin-bottom: 5px;
+    }
+
+    .minus {
+      margin-top: 5px;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .controls img {
+      width: 50px;
+      height: 50px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .controls img:hover {
+      transform: scale(1.1);
+    }
+
+    .progress {
+      margin: 10px 0;
+      height: 15px;
+      background: #ccc;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: black;
+      transition: width 0.01s linear;
+    }
+
+    @font-face {
+      font-family: 'Digital-7';
+      src: url('https://fonts.cdnfonts.com/s/18017/Digital7-Regular.woff') format('woff');
+    }
+</style>
+<div class="timer-container">
+<div class="timer" id="timer"><span><button class="timer-button plus" onclick="adjustTime(60000)">+</button> </span>
+<div id="minutes"><span>10</span></div>
+<span><button class="timer-button minus" onclick="adjustTime(-60000)">-</button> </span> : <span><button class="timer-button plus" onclick="adjustTime(1000)">+</button> </span>
+
+<div id="seconds"><span>00</span></div>
+<span><button class="timer-button minus" onclick="adjustTime(-1000)">-</button> </span> : <span><button class="timer-button plus" onclick="adjustTime(10)">+</button> </span>
+
+<div id="milliseconds"><span>00</span></div>
+<span><button class="timer-button minus" onclick="adjustTime(-10)">-</button> </span></div>
+
+<div class="controls"><img alt="Start/Stop" id="start-stop-btn" onclick="toggleTimer()" src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Play_Pause_icon_2283501.svg/300px-Play_Pause_icon_2283501.svg.png" /> <img alt="Reset" onclick="resetTimer()" src="https://www.svgrepo.com/show/343263/reset.svg" /></div>
+
+<div class="progress">
+<div class="progress-bar" id="progress-bar"> </div>
+</div>
+</div>
+
+<p>
+<audio id="alarm-sound" preload="auto" src="https://www.soundjay.com/misc/sounds/bell-ringing-01.mp3"> </audio>
+<script>
+    let timerInterval;
+    let timeRemaining = 10 * 60 * 1000; // 10 minutes in milliseconds
+    const totalDuration = 10 * 60 * 1000; // Total fixed duration
+    let isRunning = false;
+
+    function formatTime(milliseconds) {
+      const minutes = Math.floor(milliseconds / 60000);
+      const seconds = Math.floor((milliseconds % 60000) / 1000);
+      const centiseconds = Math.floor((milliseconds % 1000) / 10); // Two decimal places
+      return { minutes, seconds, centiseconds };
+    }
+
+    function updateTimerDisplay() {
+      const { minutes, seconds, centiseconds } = formatTime(timeRemaining);
+      document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+      document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+      document.getElementById('milliseconds').textContent = String(centiseconds).padStart(2, '0');
+      const progressBar = document.getElementById('progress-bar');
+      const percentage = ((totalDuration - timeRemaining) / totalDuration) * 100;
+      progressBar.style.width = `${percentage}%`;
+    }
+
+    function adjustTime(amount) {
+      timeRemaining = Math.max(0, timeRemaining + amount);
+      updateTimerDisplay();
+      if (isRunning) {
+        clearInterval(timerInterval);
+        startTimer();
+      }
+    }
+
+    function toggleTimer() {
+      if (isRunning) {
+        pauseTimer();
+      } else {
+        startTimer();
+      }
+    }
+
+    function startTimer() {
+      if (timeRemaining <= 0) return;
+
+      const startTime = Date.now();
+      const endTime = startTime + timeRemaining;
+      isRunning = true;
+
+      timerInterval = setInterval(() => {
+        const now = Date.now();
+        timeRemaining = Math.max(0, endTime - now);
+        updateTimerDisplay();
+
+        if (timeRemaining <= 0) {
+          clearInterval(timerInterval);
+          isRunning = false;
+          document.getElementById('alarm-sound').play();
+        }
+      }, 10); // Update every 10 ms
+    }
+
+    function pauseTimer() {
+      clearInterval(timerInterval);
+      timerInterval = null;
+      isRunning = false;
+    }
+
+    function resetTimer() {
+      pauseTimer();
+      timeRemaining = totalDuration; // Reset to 10 minutes
+      updateTimerDisplay();
+    }
+
+    updateTimerDisplay();
+  </script></p>
