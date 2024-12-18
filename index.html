@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Basketball Timer</title>
   <style>
-    /* Todo o seu estilo atual permanece aqui */
     body {
       font-family: 'Digital-7', monospace;
       text-align: center;
@@ -19,33 +18,30 @@
       height: 100vh;
       color: black;
     }
+
     .timer-container {
       padding: 10px;
       border-radius: 10px;
       max-width: 500px;
       width: 100%;
     }
+
     .timer {
       font-size: 80px;
       margin: 10px 0;
       color: black;
       letter-spacing: 3px;
-      position: relative;
       display: flex;
       justify-content: center;
       gap: 15px;
     }
-    .timer span {
-      position: relative;
-      display: inline-flex;
-      flex-direction: column;
-      align-items: center;
-    }
+
     .controls {
       display: flex;
       justify-content: center;
       gap: 10px;
     }
+
     .log-container {
       margin-top: 20px;
       width: 80%;
@@ -53,6 +49,7 @@
       font-family: Arial, sans-serif;
       text-align: left;
     }
+
     .log-entry {
       padding: 5px;
       border-bottom: 1px solid #ccc;
@@ -63,34 +60,16 @@
 <body>
   <div class="timer-container">
     <div class="timer" id="timer">
-      <span>
-        <button class="timer-button plus" onclick="adjustTime(60000)">+</button>
-        <div id="minutes">10</div>
-        <button class="timer-button minus" onclick="adjustTime(-60000)">-</button>
-      </span>
-      :
-      <span>
-        <button class="timer-button plus" onclick="adjustTime(1000)">+</button>
-        <div id="seconds">00</div>
-        <button class="timer-button minus" onclick="adjustTime(-1000)">-</button>
-      </span>
-      :
-      <span>
-        <button class="timer-button plus" onclick="adjustTime(10)">+</button>
-        <div id="milliseconds">00</div>
-        <button class="timer-button minus" onclick="adjustTime(-10)">-</button>
-      </span>
+      <span id="minutes">10</span>:<span id="seconds">00</span>:<span id="milliseconds">00</span>
     </div>
 
     <div class="controls">
-      <img id="start-stop-btn" src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Play_Pause_icon_2283501.svg/300px-Play_Pause_icon_2283501.svg.png" onclick="toggleTimer()" alt="Start/Stop">
-      <img src="https://www.svgrepo.com/show/343263/reset.svg" onclick="resetTimer()" alt="Reset">
+      <button onclick="toggleTimer()">Start/Stop</button>
+      <button onclick="resetTimer()">Reset</button>
     </div>
   </div>
 
   <div class="log-container" id="log-container"></div>
-
-  <audio id="alarm-sound" src="https://www.soundjay.com/misc/sounds/bell-ringing-01.mp3" preload="auto"></audio>
 
   <script>
     let timerInterval;
@@ -101,7 +80,7 @@
     function formatTime(milliseconds) {
       const minutes = Math.floor(milliseconds / 60000);
       const seconds = Math.floor((milliseconds % 60000) / 1000);
-      const centiseconds = Math.floor((milliseconds % 1000) / 10); // Two decimal places
+      const centiseconds = Math.floor((milliseconds % 1000) / 10);
       return { minutes, seconds, centiseconds };
     }
 
@@ -110,15 +89,6 @@
       document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
       document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
       document.getElementById('milliseconds').textContent = String(centiseconds).padStart(2, '0');
-    }
-
-    function adjustTime(amount) {
-      timeRemaining = Math.max(0, timeRemaining + amount);
-      updateTimerDisplay();
-      if (isRunning) {
-        clearInterval(timerInterval);
-        startTimer();
-      }
     }
 
     function toggleTimer() {
@@ -144,14 +114,12 @@
         if (timeRemaining <= 0) {
           clearInterval(timerInterval);
           isRunning = false;
-          document.getElementById('alarm-sound').play();
         }
-      }, 10); // Update every 10 ms
+      }, 10);
     }
 
     function pauseTimer() {
       clearInterval(timerInterval);
-      timerInterval = null;
       isRunning = false;
       logPauseTime();
     }
@@ -164,13 +132,14 @@
       newLog.textContent = `Paused at: ${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}:${String(centiseconds).padStart(2, '0')}`;
       logContainer.appendChild(newLog);
 
-      // URL do Google Apps Script
+      // Enviar dados ao Google Sheets
       const sheetUrl = `https://script.google.com/macros/s/AKfycbw7E3v4qQ3hUW4ufqP62M8OyBolJY66RSMTS_MI2WfyQVUvM0NomKENbnEHzA43no9hVg/exec?time=${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}:${String(centiseconds).padStart(2, '0')}`;
+
       try {
-        await fetch(sheetUrl, { method: "GET", mode: "no-cors" });
+        const response = await fetch(sheetUrl, { method: "GET" });
         console.log("Dados enviados com sucesso para o Google Sheets!");
       } catch (error) {
-        console.error("Erro ao conectar ao Google Apps Script:", error);
+        console.error("Erro ao enviar os dados para o Google Sheets:", error);
       }
     }
 
@@ -184,4 +153,3 @@
   </script>
 </body>
 </html>
-
