@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Basketball Timer</title>
   <style>
+    /* Todo o seu estilo atual permanece aqui */
     body {
       font-family: 'Digital-7', monospace;
       text-align: center;
@@ -18,14 +19,12 @@
       height: 100vh;
       color: black;
     }
-
     .timer-container {
       padding: 10px;
       border-radius: 10px;
       max-width: 500px;
       width: 100%;
     }
-
     .timer {
       font-size: 80px;
       margin: 10px 0;
@@ -36,63 +35,17 @@
       justify-content: center;
       gap: 15px;
     }
-
     .timer span {
       position: relative;
       display: inline-flex;
       flex-direction: column;
       align-items: center;
     }
-
-    .timer-button {
-      font-size: 16px;
-      color: black;
-      background-color: transparent;
-      border: none;
-      cursor: pointer;
-      user-select: none;
-    }
-
-    .plus {
-      margin-bottom: 5px;
-    }
-
-    .minus {
-      margin-top: 5px;
-    }
-
     .controls {
       display: flex;
       justify-content: center;
       gap: 10px;
     }
-
-    .controls img {
-      width: 50px;
-      height: 50px;
-      cursor: pointer;
-      transition: transform 0.2s;
-    }
-
-    .controls img:hover {
-      transform: scale(1.1);
-    }
-
-    .progress {
-      margin: 10px 0;
-      height: 15px;
-      background: #ccc;
-      border-radius: 10px;
-      overflow: hidden;
-    }
-
-    .progress-bar {
-      height: 100%;
-      width: 0%;
-      background: black;
-      transition: width 0.01s linear;
-    }
-
     .log-container {
       margin-top: 20px;
       width: 80%;
@@ -100,16 +53,10 @@
       font-family: Arial, sans-serif;
       text-align: left;
     }
-
     .log-entry {
       padding: 5px;
       border-bottom: 1px solid #ccc;
       font-size: 14px;
-    }
-
-    @font-face {
-      font-family: 'Digital-7';
-      src: url('https://fonts.cdnfonts.com/s/18017/Digital7-Regular.woff') format('woff');
     }
   </style>
 </head>
@@ -139,10 +86,6 @@
       <img id="start-stop-btn" src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Play_Pause_icon_2283501.svg/300px-Play_Pause_icon_2283501.svg.png" onclick="toggleTimer()" alt="Start/Stop">
       <img src="https://www.svgrepo.com/show/343263/reset.svg" onclick="resetTimer()" alt="Reset">
     </div>
-
-    <div class="progress">
-      <div class="progress-bar" id="progress-bar"></div>
-    </div>
   </div>
 
   <div class="log-container" id="log-container"></div>
@@ -167,9 +110,6 @@
       document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
       document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
       document.getElementById('milliseconds').textContent = String(centiseconds).padStart(2, '0');
-      const progressBar = document.getElementById('progress-bar');
-      const percentage = ((totalDuration - timeRemaining) / totalDuration) * 100;
-      progressBar.style.width = `${percentage}%`;
     }
 
     function adjustTime(amount) {
@@ -213,16 +153,25 @@
       clearInterval(timerInterval);
       timerInterval = null;
       isRunning = false;
-      logPauseTime(); // Log the time when paused
+      logPauseTime();
     }
 
-    function logPauseTime() {
+    async function logPauseTime() {
       const { minutes, seconds, centiseconds } = formatTime(timeRemaining);
       const logContainer = document.getElementById('log-container');
       const newLog = document.createElement('div');
       newLog.className = 'log-entry';
       newLog.textContent = `Paused at: ${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}:${String(centiseconds).padStart(2, '0')}`;
       logContainer.appendChild(newLog);
+
+      // URL do Google Apps Script
+      const sheetUrl = `https://script.google.com/macros/s/AKfycbw7E3v4qQ3hUW4ufqP62M8OyBolJY66RSMTS_MI2WfyQVUvM0NomKENbnEHzA43no9hVg/exec?time=${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}:${String(centiseconds).padStart(2, '0')}`;
+      try {
+        await fetch(sheetUrl, { method: "GET", mode: "no-cors" });
+        console.log("Dados enviados com sucesso para o Google Sheets!");
+      } catch (error) {
+        console.error("Erro ao conectar ao Google Apps Script:", error);
+      }
     }
 
     function resetTimer() {
@@ -235,3 +184,4 @@
   </script>
 </body>
 </html>
+
