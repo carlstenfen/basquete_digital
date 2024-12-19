@@ -293,7 +293,7 @@
 
   <script>
     let fixedDataSent = false;
-    // Substitua pelo URL real do seu Web App
+    // Use a URL do seu Web App com doGet configurado
     const scriptURL = 'https://script.google.com/macros/s/AKfycbw7E3v4qQ3hUW4ufqP62M8OyBolJY66RSMTS_MI2WfyQVUvM0NomKENbnEHzA43no9hVg/exec';
 
     const competicaoInput = document.querySelector('.extra-info-container input[placeholder="Digite a competição"]');
@@ -329,13 +329,14 @@
       const selectedPlayerBlue = document.querySelector('#blue-team button.active');
       const time = `${document.getElementById('minutes').textContent}:${document.getElementById('seconds').textContent}`;
 
-      const period = selectedPeriod ? selectedPeriod.textContent : 'Nenhum período selecionado';
-      const player = selectedPlayerRed ? `Time A - ${selectedPlayerRed.textContent}` : (selectedPlayerBlue ? `Time B - ${selectedPlayerBlue.textContent}` : 'Nenhum jogador selecionado');
+      const period = selectedPeriod ? selectedPeriod.textContent : '';
+      const player = selectedPlayerRed ? `Time A - ${selectedPlayerRed.textContent}` 
+                   : (selectedPlayerBlue ? `Time B - ${selectedPlayerBlue.textContent}` : '');
 
       const logMessage = `${period}, ${time}, ${player}, ${action}`;
       logAction(logMessage);
 
-      // Contagem de pontos
+      // Atualiza pontos/faltas
       if (action.includes("1 Ponto")) {
         if (selectedPlayerRed) teamAScore.points += 1;
         if (selectedPlayerBlue) teamBScore.points += 1;
@@ -347,59 +348,52 @@
         if (selectedPlayerBlue) teamBScore.points += 3;
       }
 
-      // Contagem de faltas
       if (action.includes("Falta")) {
         if (selectedPlayerRed) teamAScore.fouls += 1;
         if (selectedPlayerBlue) teamBScore.fouls += 1;
       }
 
-      // Atualiza o placar
       updateScoreboard();
 
-      // Envio ao Apps Script via FormData (sem JSON)
-      const formData = new FormData();
-      if (!fixedDataSent) {
-        formData.append('competicao', competicaoInput.value);
-        formData.append('local', localInput.value);
-        formData.append('arbitro', arbitroInput.value);
-        formData.append('fiscal', fiscalInput.value);
-        formData.append('cronometrista', cronometristaInput.value);
-        formData.append('operador', operadorInput.value);
-      }
-
-      formData.append('quarto', period);
-      formData.append('tempo', time);
+      // Construção da URL de GET com parâmetros
+      let url = scriptURL + '?acao=' + encodeURIComponent(action) 
+                          + '&tempo=' + encodeURIComponent(time)
+                          + '&quarto=' + encodeURIComponent(period);
 
       if (player.includes('Time A')) {
-        formData.append('timeJogo', 'Time A');
-        formData.append('jogador', player.replace('Time A - ', ''));
+        url += '&timeJogo=' + encodeURIComponent('Time A');
+        url += '&jogador=' + encodeURIComponent(player.replace('Time A - ', ''));
       } else if (player.includes('Time B')) {
-        formData.append('timeJogo', 'Time B');
-        formData.append('jogador', player.replace('Time B - ', ''));
+        url += '&timeJogo=' + encodeURIComponent('Time B');
+        url += '&jogador=' + encodeURIComponent(player.replace('Time B - ', ''));
       } else {
-        formData.append('timeJogo', '');
-        formData.append('jogador', '');
+        url += '&timeJogo=&jogador=';
       }
 
-      formData.append('acao', action);
+      if (!fixedDataSent) {
+        url += '&competicao=' + encodeURIComponent(competicaoInput.value)
+             + '&local=' + encodeURIComponent(localInput.value)
+             + '&arbitro=' + encodeURIComponent(arbitroInput.value)
+             + '&fiscal=' + encodeURIComponent(fiscalInput.value)
+             + '&cronometrista=' + encodeURIComponent(cronometristaInput.value)
+             + '&operador=' + encodeURIComponent(operadorInput.value);
+      }
 
-      fetch(scriptURL, {
-        method: 'POST',
-        body: formData
-      })
-      .then(response => response.json())
-      .then(res => {
-        if (res.status === "success") {
-          if (!fixedDataSent) {
-            fixedDataSent = true;
+      // Envio via GET
+      fetch(url)
+        .then(response => response.json())
+        .then(res => {
+          if (res.status === "success") {
+            if (!fixedDataSent) {
+              fixedDataSent = true;
+            }
+          } else {
+            console.error("Erro ao enviar:", res.message);
           }
-        } else {
-          console.error("Erro ao enviar:", res.message);
-        }
-      })
-      .catch(err => {
-        console.error("Erro ao enviar os dados:", err);
-      });
+        })
+        .catch(err => {
+          console.error("Erro ao enviar os dados:", err);
+        });
     }
 
     function toggleTimer() {
