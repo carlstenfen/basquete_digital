@@ -293,7 +293,8 @@
 
   <script>
     let fixedDataSent = false;
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbw7E3v4qQ3hUW4ufqP62M8OyBolJY66RSMTS_MI2WfyQVUvM0NomKENbnEHzA43no9hVg/exec';
+    // Atualize a URL para a nova implantação (URL /dev)
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbxOiMkg3HF0fYzPIGQQZvUv3D586E7Ot5bMuHObL73O/dev';
 
     const competicaoInput = document.querySelector('.extra-info-container input[placeholder="Digite a competição"]');
     const localInput = document.querySelector('.extra-info-container input[placeholder="Digite o local"]');
@@ -381,7 +382,6 @@
       // Envio via GET com no-cors
       fetch(url, { method: 'GET', mode: 'no-cors' })
         .then(() => {
-          // Não podemos ler a resposta no no-cors, mas sabemos que não houve erro de rede
           console.log("Dados enviados com sucesso (no-cors).");
           if (!fixedDataSent) {
             fixedDataSent = true;
