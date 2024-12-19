@@ -434,15 +434,17 @@
       redButton.textContent = `Jogador ${i}`;
       redButton.onclick = () => selectExclusiveButton(redButton, 'red-team');
       redTeamContainer.appendChild(redButton);
-    }
 
-    for (let i = 1; i <= 12; i++) {
       const blueButton = document.createElement("button");
       blueButton.textContent = `Jogador ${i}`;
       blueButton.onclick = () => selectExclusiveButton(blueButton, 'blue-team');
       blueTeamContainer.appendChild(blueButton);
     }
+
+    // Start Timer at page load
+    updateTimer();
   </script>
 </body>
 </html>
+
 
