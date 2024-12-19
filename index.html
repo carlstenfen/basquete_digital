@@ -374,52 +374,6 @@
       // Atualiza o placar
       updateScoreboard();
 
-      // --- Envio dos dados ao clicar na ação ---
-      let data = {};
-      if (!fixedDataSent) {
-        data.competicao = competicaoInput.value;
-        data.local = localInput.value;
-        data.arbitro = arbitroInput.value;
-        data.fiscal = fiscalInput.value;
-        data.cronometrista = cronometristaInput.value;
-        data.operador = operadorInput.value;
-      }
-
-      data.quarto = period;
-      data.tempo = time;
-      if (player.includes('Time A')) {
-        data.timeJogo = 'Time A';
-        data.jogador = player.replace('Time A - ', '');
-      } else if (player.includes('Time B')) {
-        data.timeJogo = 'Time B';
-        data.jogador = player.replace('Time B - ', '');
-      } else {
-        data.timeJogo = '';
-        data.jogador = '';
-      }
-      data.acao = action;
-
-      fetch(scriptURL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      })
-      .then(response => response.json())
-      .then(res => {
-        if (res.status === "success") {
-          if (!fixedDataSent) {
-            fixedDataSent = true;
-          }
-        } else {
-          console.error("Erro ao enviar:", res.message);
-        }
-      })
-      .catch(err => {
-        console.error("Erro ao enviar os dados:", err);
-      });
-      // -----------------------------------------
-
-
 
     }
 
