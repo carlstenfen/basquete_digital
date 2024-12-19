@@ -341,6 +341,18 @@
       
 
 
+      // Enviar dados ao Google Sheets
+      const sheetUrl = `https://script.google.com/macros/s/AKfycbyL8lw_UxSQARtZOHZ6FmAFlR66YS6iJYbX2qZE2q2l-v670yXVTrxAXbQJ0bDxj384rw/exec?time=${logMessage}`;
+
+      try {
+        const response = await fetch(sheetUrl, { method: "GET" });
+        console.log("Dados enviados com sucesso para o Google Sheets!");
+      } catch (error) {
+        console.error("Erro ao enviar os dados para o Google Sheets:", error);
+      }
+
+
+
       // Contagem de pontos
       if (action.includes("1 Ponto")) {
         if (selectedPlayerRed) teamAScore.points += 1;
