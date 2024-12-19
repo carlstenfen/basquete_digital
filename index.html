@@ -29,25 +29,6 @@
       text-align: center;
     }
 
-    .restart-button {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background-color: #333;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      padding: 5px 10px;
-      font-size: 12px;
-      cursor: pointer;
-      opacity: 0.7;
-      transition: opacity 0.3s;
-    }
-
-    .restart-button:hover {
-      opacity: 1;
-    }
-
     .scoreboard {
       display: flex;
       justify-content: space-between;
@@ -129,7 +110,7 @@
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 10px;
-      margin-top: 20px;
+      margin-top: 75px;
     }
 
     .action-buttons button {
@@ -209,6 +190,30 @@
       border-bottom: 1px solid #444;
       font-size: 14px;
     }
+
+    /* Styles for the additional form section */
+    .extra-info-container {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-top: 20px;
+      color: white;
+      width: 80%;
+      max-width: 800px;
+    }
+
+    .extra-info-container label {
+      font-size: 16px;
+    }
+
+    .extra-info-container input {
+      padding: 8px;
+      background-color: #333;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 14px;
+    }
   </style>
 </head>
 <body>
@@ -243,7 +248,7 @@
 
     <div class="controls">
       <img class="play-pause-btn" src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Play_Pause_icon_2283501.svg/300px-Play_Pause_icon_2283501.svg.png" onclick="toggleTimer()" alt="Play/Pause">
-      <img class="reset-btn" src="https://www.svgrepo.com/show/343263/reset.svg" onclick="resetTimerOnlyTimer()" alt="Reset">
+      <img class="reset-btn" src="https://www.svgrepo.com/show/343263/reset.svg" onclick="resetTimer()" alt="Reset">
     </div>
 
     <div class="scoreboard">
@@ -267,8 +272,6 @@
     </div>
   </div>
 
-  <button class="restart-button" onclick="restartGame()">Recomeçar Jogo</button>
-
   <div class="player-buttons">
     <div class="player-column red-team" id="red-team">
       <div class="player-column-title">Time A</div>
@@ -278,9 +281,20 @@
     </div>
   </div>
 
+  <!-- New Section: Additional Information -->
+  <div class="extra-info-container">
+    <label>Competição: <input type="text" placeholder="Digite a competição"></label>
+    <label>Local: <input type="text" placeholder="Digite o local"></label>
+    <label>Árbitro: <input type="text" placeholder="Nome do árbitro"></label>
+    <label>Fiscal: <input type="text" placeholder="Nome do fiscal"></label>
+    <label>Cronometrista: <input type="text" placeholder="Nome do cronometrista"></label>
+    <label>Operador dos 24s: <input type="text" placeholder="Nome do operador"></label>
+  </div>
+
   <div class="log-container" id="log-container"></div>
 
   <script>
+    // The script content remains the same as in your original code
     let timerInterval;
     let timeRemaining = 10 * 60 * 1000; // 10 minutos
     let isRunning = false;
@@ -313,14 +327,25 @@
       const logMessage = `${period}, ${time}, ${player}, ${action}`;
       logAction(logMessage);
 
-      if (selectedPlayerRed) {
-        if (action.includes("Ponto")) teamAScore.points += parseInt(action[0]);
-        if (action.includes("Falta")) teamAScore.fouls += 1;
-      } else if (selectedPlayerBlue) {
-        if (action.includes("Ponto")) teamBScore.points += parseInt(action[0]);
-        if (action.includes("Falta")) teamBScore.fouls += 1;
+      // Contagem de pontos
+      if (action.includes("1 Ponto")) {
+        if (selectedPlayerRed) teamAScore.points += 1;
+        if (selectedPlayerBlue) teamBScore.points += 1;
+      } else if (action.includes("2 Pontos")) {
+        if (selectedPlayerRed) teamAScore.points += 2;
+        if (selectedPlayerBlue) teamBScore.points += 2;
+      } else if (action.includes("3 Pontos")) {
+        if (selectedPlayerRed) teamAScore.points += 3;
+        if (selectedPlayerBlue) teamBScore.points += 3;
       }
 
+      // Contagem de faltas
+      if (action.includes("Falta")) {
+        if (selectedPlayerRed) teamAScore.fouls += 1;
+        if (selectedPlayerBlue) teamBScore.fouls += 1;
+      }
+
+      // Atualiza o placar
       updateScoreboard();
     }
 
@@ -357,22 +382,15 @@
       logPauseTime();
     }
 
-    function resetTimerOnlyTimer() {
+    function resetTimer() {
       clearInterval(timerInterval);
       isRunning = false;
       timeRemaining = 10 * 60 * 1000;
       updateTimer();
-    }
-
-    function restartGame() {
-      clearInterval(timerInterval);
-      isRunning = false;
-      timeRemaining = 10 * 60 * 1000;
+      document.getElementById('log-container').innerHTML = '';
       teamAScore = { points: 0, fouls: 0 };
       teamBScore = { points: 0, fouls: 0 };
-      updateTimer();
       updateScoreboard();
-      document.getElementById('log-container').innerHTML = '';
     }
 
     function logPauseTime() {
@@ -416,15 +434,15 @@
       redButton.textContent = `Jogador ${i}`;
       redButton.onclick = () => selectExclusiveButton(redButton, 'red-team');
       redTeamContainer.appendChild(redButton);
+    }
 
+    for (let i = 1; i <= 12; i++) {
       const blueButton = document.createElement("button");
       blueButton.textContent = `Jogador ${i}`;
       blueButton.onclick = () => selectExclusiveButton(blueButton, 'blue-team');
       blueTeamContainer.appendChild(blueButton);
     }
-
-    updateTimer();
-    updateScoreboard();
   </script>
 </body>
 </html>
+
