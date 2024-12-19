@@ -294,7 +294,6 @@
   <div class="log-container" id="log-container"></div>
 
   <script>
-    // --- Adição de código para envio ao Apps Script ---
     let fixedDataSent = false;
     const scriptURL = 'https://script.google.com/macros/s/SEU_ID_DO_WEBAPP/exec';
 
@@ -304,7 +303,6 @@
     const fiscalInput = document.querySelector('.extra-info-container input[placeholder="Nome do fiscal"]');
     const cronometristaInput = document.querySelector('.extra-info-container input[placeholder="Nome do cronometrista"]');
     const operadorInput = document.querySelector('.extra-info-container input[placeholder="Nome do operador"]');
-    // -------------------------------------------------
 
     let timerInterval;
     let timeRemaining = 10 * 60 * 1000; // 10 minutos
@@ -359,7 +357,7 @@
       // Atualiza o placar
       updateScoreboard();
 
-      // --- Envio dos dados ao clicar na ação ---
+      // Envio ao Apps Script via FormData (sem JSON)
       const formData = new FormData();
       if (!fixedDataSent) {
         formData.append('competicao', competicaoInput.value);
@@ -403,7 +401,6 @@
       .catch(err => {
         console.error("Erro ao enviar os dados:", err);
       });
-      // -----------------------------------------
     }
 
     function toggleTimer() {
@@ -448,7 +445,7 @@
       teamAScore = { points: 0, fouls: 0 };
       teamBScore = { points: 0, fouls: 0 };
       updateScoreboard();
-      fixedDataSent = false; // reseta o envio fixo caso precise reiniciar
+      fixedDataSent = false;
     }
 
     function logPauseTime() {
