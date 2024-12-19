@@ -294,7 +294,18 @@
   <div class="log-container" id="log-container"></div>
 
   <script>
-    // The script content remains the same as in your original code
+    // --- Adição de código para envio ao Apps Script ---
+    let fixedDataSent = false;
+    const scriptURL = 'https://script.google.com/macros/s/SEU_ID_DO_WEBAPP/exec';
+
+    const competicaoInput = document.querySelector('.extra-info-container input[placeholder="Digite a competição"]');
+    const localInput = document.querySelector('.extra-info-container input[placeholder="Digite o local"]');
+    const arbitroInput = document.querySelector('.extra-info-container input[placeholder="Nome do árbitro"]');
+    const fiscalInput = document.querySelector('.extra-info-container input[placeholder="Nome do fiscal"]');
+    const cronometristaInput = document.querySelector('.extra-info-container input[placeholder="Nome do cronometrista"]');
+    const operadorInput = document.querySelector('.extra-info-container input[placeholder="Nome do operador"]');
+    // -------------------------------------------------
+
     let timerInterval;
     let timeRemaining = 10 * 60 * 1000; // 10 minutos
     let isRunning = false;
@@ -347,6 +358,51 @@
 
       // Atualiza o placar
       updateScoreboard();
+
+      // --- Envio dos dados ao clicar na ação ---
+      let data = {};
+      if (!fixedDataSent) {
+        data.competicao = competicaoInput.value;
+        data.local = localInput.value;
+        data.arbitro = arbitroInput.value;
+        data.fiscal = fiscalInput.value;
+        data.cronometrista = cronometristaInput.value;
+        data.operador = operadorInput.value;
+      }
+
+      data.quarto = period;
+      data.tempo = time;
+      if (player.includes('Time A')) {
+        data.timeJogo = 'Time A';
+        data.jogador = player.replace('Time A - ', '');
+      } else if (player.includes('Time B')) {
+        data.timeJogo = 'Time B';
+        data.jogador = player.replace('Time B - ', '');
+      } else {
+        data.timeJogo = '';
+        data.jogador = '';
+      }
+      data.acao = action;
+
+      fetch(scriptURL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      })
+      .then(response => response.json())
+      .then(res => {
+        if (res.status === "success") {
+          if (!fixedDataSent) {
+            fixedDataSent = true;
+          }
+        } else {
+          console.error("Erro ao enviar:", res.message);
+        }
+      })
+      .catch(err => {
+        console.error("Erro ao enviar os dados:", err);
+      });
+      // -----------------------------------------
     }
 
     function toggleTimer() {
@@ -391,6 +447,7 @@
       teamAScore = { points: 0, fouls: 0 };
       teamBScore = { points: 0, fouls: 0 };
       updateScoreboard();
+      fixedDataSent = false; // reseta o envio fixo caso precise reiniciar
     }
 
     function logPauseTime() {
