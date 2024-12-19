@@ -1,442 +1,124 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
+"<!DOCTYPE html>
+<html lang=""en"">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset=""UTF-8"">
+  <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
   <title>Basketball Timer</title>
   <style>
-    /* Seu CSS permanece o mesmo */
+    /* Todo o seu estilo atual permanece aqui */
     body {
       font-family: 'Digital-7', monospace;
-      background-color: black;
+      text-align: center;
+      background-color: white;
       margin: 0;
       padding: 0;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      color: white;
-    }
-
-    .timer-container {
-      position: fixed;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background-color: black;
-      z-index: 1000;
-      padding: 10px 20px;
-      border-radius: 10px;
-      box-shadow: 0px 2px 5px rgba(255, 255, 255, 0.2);
-      text-align: center;
-    }
-
-    .scoreboard {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 10px;
-      color: white;
-      font-size: 18px;
-      font-family: Arial, sans-serif;
-    }
-
-    .scoreboard div {
-      text-align: center;
-      margin: 0 10px;
-    }
-
-    .period-buttons {
-      display: flex;
       justify-content: center;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-
-    .period-buttons button {
-      padding: 5px 10px;
-      border: none;
-      border-radius: 5px;
-      font-size: 14px;
-      cursor: pointer;
-      background-color: #333;
-      color: white;
-      transition: all 0.3s;
-    }
-
-    .period-buttons button.active {
-      background-color: white;
+      align-items: center;
+      height: 100vh;
       color: black;
-      box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.5);
     }
-
+    .timer-container {
+      padding: 10px;
+      border-radius: 10px;
+      max-width: 500px;
+      width: 100%;
+    }
     .timer {
       font-size: 80px;
       margin: 10px 0;
+      color: black;
+      letter-spacing: 3px;
+      position: relative;
       display: flex;
       justify-content: center;
       gap: 15px;
-      color: white;
     }
-
     .timer span {
-      display: flex;
+      position: relative;
+      display: inline-flex;
       flex-direction: column;
       align-items: center;
-      gap: 5px;
     }
-
-    .plus-minus-btn {
-      font-size: 24px;
-      color: white;
-      background: none;
-      border: none;
-      cursor: pointer;
-    }
-
     .controls {
       display: flex;
       justify-content: center;
-      align-items: center;
-      gap: 20px;
-    }
-
-    .play-pause-btn, .reset-btn {
-      width: 50px;
-      height: 50px;
-      cursor: pointer;
-      filter: invert(1);
-    }
-
-    .action-buttons {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-top: 75px;
-    }
-
-    .action-buttons button {
-      padding: 10px;
-      border: none;
-      border-radius: 5px;
-      font-size: 14px;
-      cursor: pointer;
-      background-color: #333;
-      color: white;
-      transition: all 0.3s;
-    }
-
-    .action-buttons button:hover {
-      background-color: #555;
-    }
-
-    .player-buttons {
-      display: flex;
-      justify-content: space-between;
-      width: 80%;
-      max-width: 800px;
-      margin: 20px 0;
-    }
-
-    .player-column {
-      display: flex;
-      flex-direction: column;
       gap: 10px;
     }
-
-    .player-column-title {
-      text-align: center;
-      font-size: 20px;
-      margin-bottom: 10px;
-    }
-
-    .player-column button {
-      padding: 10px;
-      border: none;
-      border-radius: 5px;
-      font-size: 14px;
-      cursor: pointer;
-      background-color: #333;
-      color: white;
-      transition: all 0.3s;
-    }
-
-    .player-column button.active {
-      background-color: white;
-      color: black;
-    }
-
-    .red-team button {
-      background-color: #FF5555;
-    }
-
-    .blue-team button {
-      background-color: #5555FF;
-    }
-
     .log-container {
+      margin-top: 20px;
       width: 80%;
-      max-width: 800px;
+      max-width: 500px;
       font-family: Arial, sans-serif;
       text-align: left;
-      margin-top: 20px;
-      color: white;
-      max-height: 200px;
-      overflow-y: auto;
-      border: 1px solid #444;
-      padding: 10px;
     }
-
     .log-entry {
       padding: 5px;
-      border-bottom: 1px solid #444;
+      border-bottom: 1px solid #ccc;
       font-size: 14px;
-    }
-
-    .extra-info-container {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-      margin-top: 20px;
-      color: white;
-      width: 80%;
-      max-width: 800px;
-    }
-
-    .extra-info-container label {
-      font-size: 16px;
-    }
-
-    .extra-info-container input {
-      padding: 8px;
-      background-color: #333;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      font-size: 14px;
-    }
-
-    /* Estilos para o botão */
-    .extra-info-container button {
-      padding: 10px;
-      background-color: #28a745;
-      border: none;
-      border-radius: 5px;
-      color: white;
-      font-size: 16px;
-      cursor: pointer;
-      transition: background-color 0.3s;
-    }
-
-    .extra-info-container button:hover {
-      background-color: #218838;
     }
   </style>
 </head>
 <body>
-  <div class="timer-container">
-    <div class="period-buttons" id="period-buttons">
-      <button onclick="selectExclusiveButton(this, 'period-buttons')">1º Quarto</button>
-      <button onclick="selectExclusiveButton(this, 'period-buttons')">2º Quarto</button>
-      <button onclick="selectExclusiveButton(this, 'period-buttons')">3º Quarto</button>
-      <button onclick="selectExclusiveButton(this, 'period-buttons')">4º Quarto</button>
-      <button onclick="selectExclusiveButton(this, 'period-buttons')">Prorrogação</button>
-    </div>
-
-    <div class="timer" id="timer">
+  <div class=""timer-container"">
+    <div class=""timer"" id=""timer"">
       <span>
-        <button class="plus-minus-btn" onclick="adjustTime(60000)">+</button>
-        <div id="minutes">10</div>
-        <button class="plus-minus-btn" onclick="adjustTime(-60000)">-</button>
+        <button class=""timer-button plus"" onclick=""adjustTime(60000)"">+</button>
+        <div id=""minutes"">10</div>
+        <button class=""timer-button minus"" onclick=""adjustTime(-60000)"">-</button>
       </span>
       :
       <span>
-        <button class="plus-minus-btn" onclick="adjustTime(1000)">+</button>
-        <div id="seconds">00</div>
-        <button class="plus-minus-btn" onclick="adjustTime(-1000)">-</button>
+        <button class=""timer-button plus"" onclick=""adjustTime(1000)"">+</button>
+        <div id=""seconds"">00</div>
+        <button class=""timer-button minus"" onclick=""adjustTime(-1000)"">-</button>
       </span>
       :
       <span>
-        <button class="plus-minus-btn" onclick="adjustTime(10)">+</button>
-        <div id="milliseconds">00</div>
-        <button class="plus-minus-btn" onclick="adjustTime(-10)">-</button>
+        <button class=""timer-button plus"" onclick=""adjustTime(10)"">+</button>
+        <div id=""milliseconds"">00</div>
+        <button class=""timer-button minus"" onclick=""adjustTime(-10)"">-</button>
       </span>
     </div>
 
-    <div class="controls">
-      <img class="play-pause-btn" src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Play_Pause_icon_2283501.svg/300px-Play_Pause_icon_2283501.svg.png" onclick="toggleTimer()" alt="Play/Pause">
-      <img class="reset-btn" src="https://www.svgrepo.com/show/343263/reset.svg" onclick="resetTimer()" alt="Reset">
-    </div>
-
-    <div class="scoreboard">
-      <div>
-        <h2>Time A</h2>
-        <div id="score-team-a">Pontos: 0 | Faltas: 0</div>
-      </div>
-      <div>
-        <h2>Time B</h2>
-        <div id="score-team-b">Pontos: 0 | Faltas: 0</div>
-      </div>
-    </div>
-
-    <div class="action-buttons">
-      <button onclick="logDetailedAction('1 Ponto')">1 Ponto</button>
-      <button onclick="logDetailedAction('2 Pontos')">2 Pontos</button>
-      <button onclick="logDetailedAction('3 Pontos')">3 Pontos</button>
-      <button onclick="logDetailedAction('Falta')">Falta</button>
-      <button onclick="logDetailedAction('Falta Técnica')">Falta Técnica</button>
-      <button onclick="logDetailedAction('Falta Antidesportiva')">Falta Antidesportiva</button>
+    <div class=""controls"">
+      <img id=""start-stop-btn"" src=""https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Play_Pause_icon_2283501.svg/300px-Play_Pause_icon_2283501.svg.png"" onclick=""toggleTimer()"" alt=""Start/Stop"">
+      <img src=""https://www.svgrepo.com/show/343263/reset.svg"" onclick=""resetTimer()"" alt=""Reset"">
     </div>
   </div>
 
-  <div class="player-buttons">
-    <div class="player-column red-team" id="red-team">
-      <div class="player-column-title">Time A</div>
-    </div>
-    <div class="player-column blue-team" id="blue-team">
-      <div class="player-column-title">Time B</div>
-    </div>
-  </div>
+  <div class=""log-container"" id=""log-container""></div>
 
-  <div class="extra-info-container">
-    <label>Competição: <input type="text" placeholder="Digite a competição"></label>
-    <label>Local: <input type="text" placeholder="Digite o local"></label>
-    <label>Árbitro: <input type="text" placeholder="Nome do árbitro"></label>
-    <label>Fiscal: <input type="text" placeholder="Nome do fiscal"></label>
-    <label>Cronometrista: <input type="text" placeholder="Nome do cronometrista"></label>
-    <label>Operador dos 24s: <input type="text" placeholder="Nome do operador"></label>
-    <button onclick="sendFixedData()">Enviar Dados Fixos</button> <!-- Botão Adicionado -->
-  </div>
-
-  <div class="log-container" id="log-container"></div>
+  <audio id=""alarm-sound"" src=""https://www.soundjay.com/misc/sounds/bell-ringing-01.mp3"" preload=""auto""></audio>
 
   <script>
-    let fixedDataSent = false;
-    // Substitua pela URL correta do seu Web App
-    const scriptURL = 'https://script.google.com/macros/s/SEU_SCRIPT_ID/exec';
-
-    const competicaoInput = document.querySelector('.extra-info-container input[placeholder="Digite a competição"]');
-    const localInput = document.querySelector('.extra-info-container input[placeholder="Digite o local"]');
-    const arbitroInput = document.querySelector('.extra-info-container input[placeholder="Nome do árbitro"]');
-    const fiscalInput = document.querySelector('.extra-info-container input[placeholder="Nome do fiscal"]');
-    const cronometristaInput = document.querySelector('.extra-info-container input[placeholder="Nome do cronometrista"]');
-    const operadorInput = document.querySelector('.extra-info-container input[placeholder="Nome do operador"]');
-
     let timerInterval;
-    let timeRemaining = 10 * 60 * 1000; // 10 minutos
+    let timeRemaining = 10 * 60 * 1000; // 10 minutes in milliseconds
+    const totalDuration = 10 * 60 * 1000; // Total fixed duration
     let isRunning = false;
-    let teamAScore = { points: 0, fouls: 0 };
-    let teamBScore = { points: 0, fouls: 0 };
 
-    function updateTimer() {
-      const minutes = String(Math.floor(timeRemaining / 60000)).padStart(2, '0');
-      const seconds = String(Math.floor((timeRemaining % 60000) / 1000)).padStart(2, '0');
-      const milliseconds = String(Math.floor((timeRemaining % 1000) / 10)).padStart(2, '0');
-      
-      console.log(`Timer Update - Minutes: ${minutes}, Seconds: ${seconds}, Milliseconds: ${milliseconds}`); // Log adicionado
-      document.getElementById('minutes').textContent = minutes;
-      document.getElementById('seconds').textContent = seconds;
-      document.getElementById('milliseconds').textContent = milliseconds;
+    function formatTime(milliseconds) {
+      const minutes = Math.floor(milliseconds / 60000);
+      const seconds = Math.floor((milliseconds % 60000) / 1000);
+      const centiseconds = Math.floor((milliseconds % 1000) / 10); // Two decimal places
+      return { minutes, seconds, centiseconds };
     }
 
-    function updateScoreboard() {
-      document.getElementById("score-team-a").textContent = `Pontos: ${teamAScore.points} | Faltas: ${teamAScore.fouls}`;
-      document.getElementById("score-team-b").textContent = `Pontos: ${teamBScore.points} | Faltas: ${teamBScore.fouls}`;
+    function updateTimerDisplay() {
+      const { minutes, seconds, centiseconds } = formatTime(timeRemaining);
+      document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+      document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+      document.getElementById('milliseconds').textContent = String(centiseconds).padStart(2, '0');
     }
 
-    function sendFixedData() {
-      if (fixedDataSent) {
-        alert("Dados fixos já foram enviados.");
-        return;
+    function adjustTime(amount) {
+      timeRemaining = Math.max(0, timeRemaining + amount);
+      updateTimerDisplay();
+      if (isRunning) {
+        clearInterval(timerInterval);
+        startTimer();
       }
-      
-      // Validação simples
-      if (!competicaoInput.value || !localInput.value || !arbitroInput.value || !fiscalInput.value || !cronometristaInput.value || !operadorInput.value) {
-        alert("Por favor, preencha todos os campos de dados fixos.");
-        return;
-      }
-      
-      const url = `${scriptURL}?type=init&competicao=${encodeURIComponent(competicaoInput.value)}&local=${encodeURIComponent(localInput.value)}&arbitro=${encodeURIComponent(arbitroInput.value)}&fiscal=${encodeURIComponent(fiscalInput.value)}&cronometrista=${encodeURIComponent(cronometristaInput.value)}&operador=${encodeURIComponent(operadorInput.value)}`;
-      
-      console.log(`URL de Dados Fixos Enviada: ${url}`); // Log adicionado
-
-      // Envio via GET com no-cors
-      fetch(url, { method: 'GET', mode: 'no-cors' })
-        .then(() => {
-          console.log("Dados fixos enviados com sucesso (no-cors).");
-          fixedDataSent = true;
-          alert("Dados fixos enviados com sucesso.");
-        })
-        .catch(err => {
-          console.error("Erro ao enviar os dados fixos:", err);
-        });
-    }
-
-    function logDetailedAction(action) {
-      if (!fixedDataSent) {
-        alert("Por favor, envie os dados fixos primeiro.");
-        return;
-      }
-      
-      const selectedPeriod = document.querySelector('#period-buttons button.active');
-      const selectedPlayerRed = document.querySelector('#red-team button.active');
-      const selectedPlayerBlue = document.querySelector('#blue-team button.active');
-
-      const minutes = document.getElementById('minutes').textContent;
-      const seconds = document.getElementById('seconds').textContent;
-      const milliseconds = document.getElementById('milliseconds').textContent;
-
-      console.log(`Action Taken - Minutes: ${minutes}, Seconds: ${seconds}, Milliseconds: ${milliseconds}`); // Log adicionado
-
-      // Formato MM:SS:CC
-      const time = `${minutes}:${seconds}:${milliseconds}`;
-
-      const period = selectedPeriod ? selectedPeriod.textContent : '';
-      const player = selectedPlayerRed ? `Time A - ${selectedPlayerRed.textContent}`
-               : (selectedPlayerBlue ? `Time B - ${selectedPlayerBlue.textContent}` : '');
-
-      const logMessage = `${period}, ${time}, ${player}, ${action}`;
-      logAction(logMessage);
-
-      // Atualiza pontos/faltas
-      if (action.includes("1 Ponto")) {
-        if (selectedPlayerRed) teamAScore.points += 1;
-        if (selectedPlayerBlue) teamBScore.points += 1;
-      } else if (action.includes("2 Pontos")) {
-        if (selectedPlayerRed) teamAScore.points += 2;
-        if (selectedPlayerBlue) teamBScore.points += 2;
-      } else if (action.includes("3 Pontos")) {
-        if (selectedPlayerRed) teamAScore.points += 3;
-        if (selectedPlayerBlue) teamBScore.points += 3;
-      }
-
-      if (action.includes("Falta")) {
-        if (selectedPlayerRed) teamAScore.fouls += 1;
-        if (selectedPlayerBlue) teamBScore.fouls += 1;
-      }
-
-      updateScoreboard();
-
-      // Construção da URL de GET com parâmetros para ação
-      let url = `${scriptURL}?type=action&acao=${encodeURIComponent(action)}&tempo=${encodeURIComponent(time)}&quarto=${encodeURIComponent(period)}`;
-
-      if (player.includes('Time A')) {
-        url += `&timeJogo=${encodeURIComponent('Time A')}&jogador=${encodeURIComponent(player.replace('Time A - ', ''))}`;
-      } else if (player.includes('Time B')) {
-        url += `&timeJogo=${encodeURIComponent('Time B')}&jogador=${encodeURIComponent(player.replace('Time B - ', ''))}`;
-      } else {
-        url += `&timeJogo=&jogador=`;
-      }
-
-      console.log(`URL de Ação Enviada: ${url}`); // Log adicionado
-
-      // Envio via GET com no-cors
-      fetch(url, { method: 'GET', mode: 'no-cors' })
-        .then(() => {
-          console.log("Ação enviada com sucesso (no-cors).");
-        })
-        .catch(err => {
-          console.error("Erro ao enviar a ação:", err);
-        });
     }
 
     function toggleTimer() {
@@ -451,92 +133,54 @@
       if (timeRemaining <= 0) return;
 
       const startTime = Date.now();
-      const end = startTime + timeRemaining;
+      const endTime = startTime + timeRemaining;
+      isRunning = true;
 
       timerInterval = setInterval(() => {
-        timeRemaining = Math.max(0, end - Date.now());
-        updateTimer();
+        const now = Date.now();
+        timeRemaining = Math.max(0, endTime - now);
+        updateTimerDisplay();
 
         if (timeRemaining <= 0) {
           clearInterval(timerInterval);
           isRunning = false;
+          document.getElementById('alarm-sound').play();
         }
-      }, 10);
-
-      isRunning = true;
+      }, 10); // Update every 10 ms
     }
 
     function pauseTimer() {
       clearInterval(timerInterval);
+      timerInterval = null;
       isRunning = false;
       logPauseTime();
     }
 
-    function resetTimer() {
-      clearInterval(timerInterval);
-      isRunning = false;
-      timeRemaining = 10 * 60 * 1000;
-      updateTimer();
-      document.getElementById('log-container').innerHTML = '';
-      teamAScore = { points: 0, fouls: 0 };
-      teamBScore = { points: 0, fouls: 0 };
-      updateScoreboard();
-      fixedDataSent = false;
-    }
-
-    function logPauseTime() {
-      const minutes = document.getElementById('minutes').textContent;
-      const seconds = document.getElementById('seconds').textContent;
-      const milliseconds = document.getElementById('milliseconds').textContent;
-      logAction(`Cronômetro pausado em: ${minutes}:${seconds}:${milliseconds}`);
-    }
-
-    function selectExclusiveButton(button, groupId) {
-      const buttons = document.querySelectorAll(`#${groupId} button`);
-      buttons.forEach(btn => btn.classList.remove('active'));
-      button.classList.add('active');
-
-      if (groupId === 'red-team') {
-        document.querySelectorAll('#blue-team button').forEach(btn => btn.classList.remove('active'));
-      } else if (groupId === 'blue-team') {
-        document.querySelectorAll('#red-team button').forEach(btn => btn.classList.remove('active'));
-      }
-    }
-
-    function adjustTime(amount) {
-      const wasRunning = isRunning;
-      if (isRunning) pauseTimer();
-      timeRemaining = Math.max(0, timeRemaining + amount);
-      updateTimer();
-      if (wasRunning) startTimer();
-    }
-
-    function logAction(message) {
+    async function logPauseTime() {
+      const { minutes, seconds, centiseconds } = formatTime(timeRemaining);
       const logContainer = document.getElementById('log-container');
       const newLog = document.createElement('div');
       newLog.className = 'log-entry';
-      newLog.textContent = message;
+      newLog.textContent = `Paused at: ${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}:${String(centiseconds).padStart(2, '0')}`;
       logContainer.appendChild(newLog);
-      logContainer.scrollTop = logContainer.scrollHeight;
+
+      // URL do Google Apps Script
+      const sheetUrl = `https://script.google.com/macros/s/AKfycbw7E3v4qQ3hUW4ufqP62M8OyBolJY66RSMTS_MI2WfyQVUvM0NomKENbnEHzA43no9hVg/exec?time=${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}:${String(centiseconds).padStart(2, '0')}`;
+      try {
+        await fetch(sheetUrl, { method: ""GET"", mode: ""no-cors"" });
+        console.log(""Dados enviados com sucesso para o Google Sheets!"");
+      } catch (error) {
+        console.error(""Erro ao conectar ao Google Apps Script:"", error);
+      }
     }
 
-    const redTeamContainer = document.getElementById("red-team");
-    const blueTeamContainer = document.getElementById("blue-team");
-
-    for (let i = 1; i <= 12; i++) {
-      const redButton = document.createElement("button");
-      redButton.textContent = `Jogador ${i}`;
-      redButton.onclick = () => selectExclusiveButton(redButton, 'red-team');
-      redTeamContainer.appendChild(redButton);
-
-      const blueButton = document.createElement("button");
-      blueButton.textContent = `Jogador ${i}`;
-      blueButton.onclick = () => selectExclusiveButton(blueButton, 'blue-team');
-      blueTeamContainer.appendChild(blueButton);
+    function resetTimer() {
+      pauseTimer();
+      timeRemaining = totalDuration; // Reset to 10 minutes
+      updateTimerDisplay();
     }
 
-    updateTimer();
+    updateTimerDisplay();
   </script>
 </body>
-</html>
-
+</html>"
