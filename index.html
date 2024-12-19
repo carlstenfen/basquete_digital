@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Basketball Timer</title>
   <style>
+    /* Seu CSS permanece o mesmo */
     body {
       font-family: 'Digital-7', monospace;
       background-color: black;
@@ -213,6 +214,22 @@
       border-radius: 5px;
       font-size: 14px;
     }
+
+    /* Adicione estilos para o botão */
+    .extra-info-container button {
+      padding: 10px;
+      background-color: #28a745;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .extra-info-container button:hover {
+      background-color: #218838;
+    }
   </style>
 </head>
 <body>
@@ -287,6 +304,7 @@
     <label>Fiscal: <input type="text" placeholder="Nome do fiscal"></label>
     <label>Cronometrista: <input type="text" placeholder="Nome do cronometrista"></label>
     <label>Operador dos 24s: <input type="text" placeholder="Nome do operador"></label>
+    <button onclick="sendFixedData()">Enviar Dados Fixos</button> <!-- Botão Adicionado -->
   </div>
 
   <div class="log-container" id="log-container"></div>
@@ -323,7 +341,37 @@
       document.getElementById("score-team-b").textContent = `Pontos: ${teamBScore.points} | Faltas: ${teamBScore.fouls}`;
     }
 
+    function sendFixedData() {
+      if (fixedDataSent) {
+        alert("Dados fixos já foram enviados.");
+        return;
+      }
+      
+      // Validação simples
+      if (!competicaoInput.value || !localInput.value || !arbitroInput.value || !fiscalInput.value || !cronometristaInput.value || !operadorInput.value) {
+        alert("Por favor, preencha todos os campos de dados fixos.");
+        return;
+      }
+      
+      const url = `${scriptURL}?type=init&competicao=${encodeURIComponent(competicaoInput.value)}&local=${encodeURIComponent(localInput.value)}&arbitro=${encodeURIComponent(arbitroInput.value)}&fiscal=${encodeURIComponent(fiscalInput.value)}&cronometrista=${encodeURIComponent(cronometristaInput.value)}&operador=${encodeURIComponent(operadorInput.value)}`;
+      
+      fetch(url, { method: 'GET', mode: 'no-cors' })
+        .then(() => {
+          console.log("Dados fixos enviados com sucesso (no-cors).");
+          fixedDataSent = true;
+          alert("Dados fixos enviados com sucesso.");
+        })
+        .catch(err => {
+          console.error("Erro ao enviar os dados fixos:", err);
+        });
+    }
+
     function logDetailedAction(action) {
+      if (!fixedDataSent) {
+        alert("Por favor, envie os dados fixos primeiro.");
+        return;
+      }
+      
       // Verifique se o cronômetro está rodando ou já rodou antes de enviar
       // caso contrário será sempre 00:00:00
       const selectedPeriod = document.querySelector('#period-buttons button.active');
@@ -363,40 +411,24 @@
 
       updateScoreboard();
 
-      // Construção da URL de GET com parâmetros
-      let url = scriptURL + '?acao=' + encodeURIComponent(action)
-                          + '&tempo=' + encodeURIComponent(time)
-                          + '&quarto=' + encodeURIComponent(period);
+      // Construção da URL de GET com parâmetros para ação
+      let url = `${scriptURL}?type=action&acao=${encodeURIComponent(action)}&tempo=${encodeURIComponent(time)}&quarto=${encodeURIComponent(period)}`;
 
       if (player.includes('Time A')) {
-        url += '&timeJogo=' + encodeURIComponent('Time A');
-        url += '&jogador=' + encodeURIComponent(player.replace('Time A - ', ''));
+        url += `&timeJogo=${encodeURIComponent('Time A')}&jogador=${encodeURIComponent(player.replace('Time A - ', ''))}`;
       } else if (player.includes('Time B')) {
-        url += '&timeJogo=' + encodeURIComponent('Time B');
-        url += '&jogador=' + encodeURIComponent(player.replace('Time B - ', ''));
+        url += `&timeJogo=${encodeURIComponent('Time B')}&jogador=${encodeURIComponent(player.replace('Time B - ', ''))}`;
       } else {
-        url += '&timeJogo=&jogador=';
-      }
-
-      if (!fixedDataSent) {
-        url += '&competicao=' + encodeURIComponent(competicaoInput.value)
-             + '&local=' + encodeURIComponent(localInput.value)
-             + '&arbitro=' + encodeURIComponent(arbitroInput.value)
-             + '&fiscal=' + encodeURIComponent(fiscalInput.value)
-             + '&cronometrista=' + encodeURIComponent(cronometristaInput.value)
-             + '&operador=' + encodeURIComponent(operadorInput.value);
+        url += `&timeJogo=&jogador=`;
       }
 
       // Envio via GET com no-cors
       fetch(url, { method: 'GET', mode: 'no-cors' })
         .then(() => {
-          console.log("Dados enviados com sucesso (no-cors).");
-          if (!fixedDataSent) {
-            fixedDataSent = true;
-          }
+          console.log("Ação enviada com sucesso (no-cors).");
         })
         .catch(err => {
-          console.error("Erro ao enviar os dados:", err);
+          console.error("Erro ao enviar a ação:", err);
         });
     }
 
