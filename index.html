@@ -293,7 +293,7 @@
 
   <script>
     let fixedDataSent = false;
-    // Atualize a URL para a nova implantação (URL /dev)
+    // Use a URL do Web App com /exec (não /dev), após publicar corretamente
     const scriptURL = 'https://script.google.com/macros/s/AKfycbyL8lw_UxSQARtZOHZ6FmAFlR66YS6iJYbX2qZE2q2l-v670yXVTrxAXbQJ0bDxj384rw/exec';
 
     const competicaoInput = document.querySelector('.extra-info-container input[placeholder="Digite a competição"]');
@@ -324,10 +324,18 @@
     }
 
     function logDetailedAction(action) {
+      // Verifique se o cronômetro está rodando ou já rodou antes de enviar
+      // caso contrário será sempre 00:00:00
       const selectedPeriod = document.querySelector('#period-buttons button.active');
       const selectedPlayerRed = document.querySelector('#red-team button.active');
       const selectedPlayerBlue = document.querySelector('#blue-team button.active');
-      const time = `${document.getElementById('minutes').textContent}:${document.getElementById('seconds').textContent}`;
+
+      const minutes = document.getElementById('minutes').textContent;
+      const seconds = document.getElementById('seconds').textContent;
+      const milliseconds = document.getElementById('milliseconds').textContent;
+
+      // Formato MM:SS:CC
+      const time = `${minutes}:${seconds}:${milliseconds}`;
 
       const period = selectedPeriod ? selectedPeriod.textContent : '';
       const player = selectedPlayerRed ? `Time A - ${selectedPlayerRed.textContent}`
