@@ -360,34 +360,35 @@
       updateScoreboard();
 
       // --- Envio dos dados ao clicar na ação ---
-      let data = {};
+      const formData = new FormData();
       if (!fixedDataSent) {
-        data.competicao = competicaoInput.value;
-        data.local = localInput.value;
-        data.arbitro = arbitroInput.value;
-        data.fiscal = fiscalInput.value;
-        data.cronometrista = cronometristaInput.value;
-        data.operador = operadorInput.value;
+        formData.append('competicao', competicaoInput.value);
+        formData.append('local', localInput.value);
+        formData.append('arbitro', arbitroInput.value);
+        formData.append('fiscal', fiscalInput.value);
+        formData.append('cronometrista', cronometristaInput.value);
+        formData.append('operador', operadorInput.value);
       }
 
-      data.quarto = period;
-      data.tempo = time;
+      formData.append('quarto', period);
+      formData.append('tempo', time);
+
       if (player.includes('Time A')) {
-        data.timeJogo = 'Time A';
-        data.jogador = player.replace('Time A - ', '');
+        formData.append('timeJogo', 'Time A');
+        formData.append('jogador', player.replace('Time A - ', ''));
       } else if (player.includes('Time B')) {
-        data.timeJogo = 'Time B';
-        data.jogador = player.replace('Time B - ', '');
+        formData.append('timeJogo', 'Time B');
+        formData.append('jogador', player.replace('Time B - ', ''));
       } else {
-        data.timeJogo = '';
-        data.jogador = '';
+        formData.append('timeJogo', '');
+        formData.append('jogador', '');
       }
-      data.acao = action;
+
+      formData.append('acao', action);
 
       fetch(scriptURL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
+        body: formData
       })
       .then(response => response.json())
       .then(res => {
