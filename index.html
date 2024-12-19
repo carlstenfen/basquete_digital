@@ -293,7 +293,6 @@
 
   <script>
     let fixedDataSent = false;
-    // Use a URL do seu Web App com doGet configurado
     const scriptURL = 'https://script.google.com/macros/s/AKfycbw7E3v4qQ3hUW4ufqP62M8OyBolJY66RSMTS_MI2WfyQVUvM0NomKENbnEHzA43no9hVg/exec';
 
     const competicaoInput = document.querySelector('.extra-info-container input[placeholder="Digite a competição"]');
@@ -330,7 +329,7 @@
       const time = `${document.getElementById('minutes').textContent}:${document.getElementById('seconds').textContent}`;
 
       const period = selectedPeriod ? selectedPeriod.textContent : '';
-      const player = selectedPlayerRed ? `Time A - ${selectedPlayerRed.textContent}` 
+      const player = selectedPlayerRed ? `Time A - ${selectedPlayerRed.textContent}`
                    : (selectedPlayerBlue ? `Time B - ${selectedPlayerBlue.textContent}` : '');
 
       const logMessage = `${period}, ${time}, ${player}, ${action}`;
@@ -356,7 +355,7 @@
       updateScoreboard();
 
       // Construção da URL de GET com parâmetros
-      let url = scriptURL + '?acao=' + encodeURIComponent(action) 
+      let url = scriptURL + '?acao=' + encodeURIComponent(action)
                           + '&tempo=' + encodeURIComponent(time)
                           + '&quarto=' + encodeURIComponent(period);
 
@@ -379,16 +378,13 @@
              + '&operador=' + encodeURIComponent(operadorInput.value);
       }
 
-      // Envio via GET
-      fetch(url)
-        .then(response => response.json())
-        .then(res => {
-          if (res.status === "success") {
-            if (!fixedDataSent) {
-              fixedDataSent = true;
-            }
-          } else {
-            console.error("Erro ao enviar:", res.message);
+      // Envio via GET com no-cors
+      fetch(url, { method: 'GET', mode: 'no-cors' })
+        .then(() => {
+          // Não podemos ler a resposta no no-cors, mas sabemos que não houve erro de rede
+          console.log("Dados enviados com sucesso (no-cors).");
+          if (!fixedDataSent) {
+            fixedDataSent = true;
           }
         })
         .catch(err => {
