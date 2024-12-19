@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Basketball Timer</title>
   <style>
     /* Seu CSS permanece o mesmo */
@@ -215,7 +215,7 @@
       font-size: 14px;
     }
 
-    /* Adicione estilos para o botão */
+    /* Estilos para o botão */
     .extra-info-container button {
       padding: 10px;
       background-color: #28a745;
@@ -311,8 +311,8 @@
 
   <script>
     let fixedDataSent = false;
-    // Use a URL do Web App com /exec (não /dev), após publicar corretamente
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbyL8lw_UxSQARtZOHZ6FmAFlR66YS6iJYbX2qZE2q2l-v670yXVTrxAXbQJ0bDxj384rw/exec';
+    // Substitua pela URL correta do seu Web App
+    const scriptURL = 'https://script.google.com/macros/s/SEU_SCRIPT_ID/exec';
 
     const competicaoInput = document.querySelector('.extra-info-container input[placeholder="Digite a competição"]');
     const localInput = document.querySelector('.extra-info-container input[placeholder="Digite o local"]');
@@ -331,6 +331,8 @@
       const minutes = String(Math.floor(timeRemaining / 60000)).padStart(2, '0');
       const seconds = String(Math.floor((timeRemaining % 60000) / 1000)).padStart(2, '0');
       const milliseconds = String(Math.floor((timeRemaining % 1000) / 10)).padStart(2, '0');
+      
+      console.log(`Timer Update - Minutes: ${minutes}, Seconds: ${seconds}, Milliseconds: ${milliseconds}`); // Log adicionado
       document.getElementById('minutes').textContent = minutes;
       document.getElementById('seconds').textContent = seconds;
       document.getElementById('milliseconds').textContent = milliseconds;
@@ -355,6 +357,9 @@
       
       const url = `${scriptURL}?type=init&competicao=${encodeURIComponent(competicaoInput.value)}&local=${encodeURIComponent(localInput.value)}&arbitro=${encodeURIComponent(arbitroInput.value)}&fiscal=${encodeURIComponent(fiscalInput.value)}&cronometrista=${encodeURIComponent(cronometristaInput.value)}&operador=${encodeURIComponent(operadorInput.value)}`;
       
+      console.log(`URL de Dados Fixos Enviada: ${url}`); // Log adicionado
+
+      // Envio via GET com no-cors
       fetch(url, { method: 'GET', mode: 'no-cors' })
         .then(() => {
           console.log("Dados fixos enviados com sucesso (no-cors).");
@@ -372,8 +377,6 @@
         return;
       }
       
-      // Verifique se o cronômetro está rodando ou já rodou antes de enviar
-      // caso contrário será sempre 00:00:00
       const selectedPeriod = document.querySelector('#period-buttons button.active');
       const selectedPlayerRed = document.querySelector('#red-team button.active');
       const selectedPlayerBlue = document.querySelector('#blue-team button.active');
@@ -382,12 +385,14 @@
       const seconds = document.getElementById('seconds').textContent;
       const milliseconds = document.getElementById('milliseconds').textContent;
 
+      console.log(`Action Taken - Minutes: ${minutes}, Seconds: ${seconds}, Milliseconds: ${milliseconds}`); // Log adicionado
+
       // Formato MM:SS:CC
       const time = `${minutes}:${seconds}:${milliseconds}`;
 
       const period = selectedPeriod ? selectedPeriod.textContent : '';
       const player = selectedPlayerRed ? `Time A - ${selectedPlayerRed.textContent}`
-                   : (selectedPlayerBlue ? `Time B - ${selectedPlayerBlue.textContent}` : '');
+               : (selectedPlayerBlue ? `Time B - ${selectedPlayerBlue.textContent}` : '');
 
       const logMessage = `${period}, ${time}, ${player}, ${action}`;
       logAction(logMessage);
@@ -421,6 +426,8 @@
       } else {
         url += `&timeJogo=&jogador=`;
       }
+
+      console.log(`URL de Ação Enviada: ${url}`); // Log adicionado
 
       // Envio via GET com no-cors
       fetch(url, { method: 'GET', mode: 'no-cors' })
@@ -478,7 +485,10 @@
     }
 
     function logPauseTime() {
-      logAction(`Cronômetro pausado em: ${document.getElementById('minutes').textContent}:${document.getElementById('seconds').textContent}:${document.getElementById('milliseconds').textContent}`);
+      const minutes = document.getElementById('minutes').textContent;
+      const seconds = document.getElementById('seconds').textContent;
+      const milliseconds = document.getElementById('milliseconds').textContent;
+      logAction(`Cronômetro pausado em: ${minutes}:${seconds}:${milliseconds}`);
     }
 
     function selectExclusiveButton(button, groupId) {
@@ -529,3 +539,4 @@
   </script>
 </body>
 </html>
+
