@@ -191,7 +191,6 @@
       font-size: 14px;
     }
 
-    /* Styles for the additional form section */
     .extra-info-container {
       display: flex;
       flex-direction: column;
@@ -281,7 +280,6 @@
     </div>
   </div>
 
-  <!-- New Section: Additional Information -->
   <div class="extra-info-container">
     <label>Competição: <input type="text" placeholder="Digite a competição"></label>
     <label>Local: <input type="text" placeholder="Digite o local"></label>
@@ -295,7 +293,8 @@
 
   <script>
     let fixedDataSent = false;
-    const scriptURL = 'https://script.google.com/macros/s/SEU_ID_DO_WEBAPP/exec';
+    // Substitua pelo URL real do seu Web App
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbw7E3v4qQ3hUW4ufqP62M8OyBolJY66RSMTS_MI2WfyQVUvM0NomKENbnEHzA43no9hVg/exec';
 
     const competicaoInput = document.querySelector('.extra-info-container input[placeholder="Digite a competição"]');
     const localInput = document.querySelector('.extra-info-container input[placeholder="Digite o local"]');
