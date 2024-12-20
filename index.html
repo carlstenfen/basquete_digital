@@ -330,7 +330,7 @@
       const selectedPeriod = document.querySelector('#period-buttons button.active');
       const selectedPlayerRed = document.querySelector('#red-team button.active');
       const selectedPlayerBlue = document.querySelector('#blue-team button.active');
-      const time = `${document.getElementById('minutes').textContent}:${document.getElementById('seconds').textContent}`;
+      const time = `${document.getElementById('minutes').textContent}:${document.getElementById('seconds').textContent}:${document.getElementById('milliseconds').textContent}`;
 
       const period = selectedPeriod ? selectedPeriod.textContent : 'Nenhum período selecionado';
       const player = selectedPlayerRed ? `Time A - ${selectedPlayerRed.textContent}` : (selectedPlayerBlue ? `Time B - ${selectedPlayerBlue.textContent}` : 'Nenhum jogador selecionado');
